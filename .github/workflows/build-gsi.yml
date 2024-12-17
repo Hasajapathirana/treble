@@ -19,7 +19,7 @@ jobs:
       run: |
           mkdir rising
           sudo apt update && sudo apt install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush repo rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
-          repo init -u https://github.com/RisingTechOSS/android -b fourteen --git-lfs
+          repo init -u https://github.com/RisingTechOSS/android -b fourteen 
       
     - name: perform full sources sync (with auto retry)
       uses: nick-fields/retry@v3
