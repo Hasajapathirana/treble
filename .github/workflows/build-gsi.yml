@@ -25,7 +25,7 @@ jobs:
     - name: clone rom manifest
       run: |
         mkdir -p src/
-        pushd src/
+          sudo apt update && sudo apt install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush repo rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
           repo init -u https://github.com/RisingTechOSS/android -b fourteen --git-lfs
 
       working-directory: src
@@ -34,21 +34,21 @@ jobs:
       uses: nick-fields/retry@v3
       with:
         command: |
-          pushd src/
+            cd src
             repo sync -c -j4 --force-sync --no-clone-bundle --no-tags
-          popd
         max_attempts: 10
         retry_on: error
         timeout_minutes: 40
+
     - name: sync the device trees with git clone
       run: |
-       
-       git clone --depth=1 -b 14 https://github.com/Exynos2100-common/android_vendor_samsung_universal2100-common vendor/samsung/universal2100-common
-       git clone --depth=1 -b 14 https://github.com/Exynos2100-common/android_vendor_samsung_p3s vendor/samsung/p3s
+       cd src
+       git clone --depth=1 -b main https://github.com/Hasajapathirana/android_vendor_samsung_universal2100-common vendor/samsung/universal2100-common
+       git clone --depth=1 -b main https://github.com/Hasajapathirana/android_vendor_samsung_p3s vendor/samsung/p3s
        git clone --depth=1 -b lineage-21 https://github.com/Exynos2100-common/android_vendor_samsung_o1s vendor/samsung/o1s 
        git clone --depth=1 -b lineage-21 https://github.com/Exynos2100-common/android_vendor_samsung_r9s vendor/samsung/r9s
        git clone --depth=1 -b lineage-21-bsp https://github.com/Exynos2100-common/android_device_samsung_universal2100-common device/samsung/universal2100-common
-       git clone --depth=1 -b lineage-21 https://github.com/Exynos2100-common/android_device_samsung_p3s device/samsung/p3s
+       git clone --depth=1 -b lineage-21 https://github.com/Hasajapathirana/android_device_samsung_p3s device/samsung/p3s
        git clone --depth=1 -b lineage-21 https://github.com/Exynos2100-common/android_device_samsung_o1s device/samsung/o1s
        git clone --depth=1 -b lineage-21 https://github.com/Exynos2100-common/android_device_samsung_r9s device/samsung/r9s
        git clone --depth=1 -b 14 https://github.com/Exynos2100-common/android_hardware_samsung_slsi-linaro_graphics hardware/samsung_slsi-linaro/graphics
@@ -62,13 +62,10 @@ jobs:
        git clone --depth=1 -b lineage-21 https://github.com/Exynos2100-common/vendor_firmware vendor/firmware
        git clone --depth=1 -b 14 https://github.com/Exynos2100-common/android_hardware_samsung hardware/samsung
        git clone --depth=1 -b lineage-21 https://github.com/Exynos2100-common/android_device_samsung_slsi_sepolicy device/samsung_slsi/sepolicy
-
-
-      working-directory: src
-      
-    - name: build standard vanilla arm64 image
+  
+    - name: Building RisingOS
       run: |
-         cd risingOS
+         cd src
          . build/envsetup.sh
          riseup p3s userdebug
          rise b
@@ -76,28 +73,14 @@ jobs:
       working-directory: src/out/target/product/p3s
     - name: upload to github
       run: |
-        
-
-        pushd "/var/www/html/${ROM_NAME}-${ROM_VERSION}-${buildDate}"
-          # create fake git repo
           git init
-
-          # set git remote
-          git remote add origin "https://github.com/${MAINTAINER}/${REPO_NAME}.git"
-
-          # set default repo
-          gh repo set-default "${MAINTAINER}/${REPO_NAME}"
-
-          # create release
+          git remote add origin "https://github.com/Hasajapathirana/treble.git"
+          gh repo set-default "Hasajapathirana/treble"
           gh release create -d -n "" -t "RisingOS-5.2-p3s"
-
-          # upload files
           gh release upload *p3s*.zip
           gh release upload recovery.img
-
-          # remove git dir
           rm -rf .git/
-        popd
+        
         
       working-directory: /var/www/html
     - name: cleanup work directory
