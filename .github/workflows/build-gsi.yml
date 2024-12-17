@@ -3,13 +3,6 @@ name: Build GSI
 on:
   workflow_dispatch:
 
-env:
-  APPLY_DEBUG_PATCHES: true
-  DISABLE_RUNNER_CLEANUP: false # should ONLY be set to true for debugging
-  MAINTAINER: Hasajapathirana
-  REPO_NAME: treble
-  ROM_NAME: RisingOS
-  ROM_VERSION: 5.2
 
 jobs:
   build-gsi:
@@ -88,7 +81,3 @@ jobs:
           rm -rf .git/
         
         
-      working-directory: /var/www/html
-    - name: cleanup work directory
-      uses: eviden-actions/clean-self-hosted-runner@v1
-      if: ${{ always() }} # Run even if previous steps in the job fail or are canceled
